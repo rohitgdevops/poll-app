@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head><title>Poll App</title></head>
+<body>
+  <h1>Create a Poll</h1>
+  <form method="POST" action="/create">
+    <input type="text" name="title" placeholder="Enter poll title" required />
+    <button type="submit">Create</button>
+  </form>
+
+  <h2>Polls</h2>
+  <ul>
+    {% for poll in polls %}
+    <li>
+      <form method="POST" action="/vote/{{ poll[0] }}">
+        {{ poll[1] }} - Vote:
+        <input type="text" name="choice" placeholder="Your vote" required />
+        <button type="submit">Vote</button>
+      </form>
+    </li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
+

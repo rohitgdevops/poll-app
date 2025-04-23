@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:latest
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: pollapp
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # Mounting init.sql to initialize the database and tables
+    networks:
+      - poll-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "pollapp"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  poll-app:
+    build: .
+    container_name: poll-app
+    environment:
+      - DB_HOST=postgres-db  # Ensures that the app connects to the correct DB service
+      - DB_USER=postgres
+      - DB_PASSWORD=mysecretpassword
+      - DB_NAME=pollapp
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres-db  # Ensures app waits for db container
+    networks:
+      - poll-network
+    restart: on-failure  # Ensure that app restarts if it fails due to DB unavailability
+
+networks:
+  poll-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+

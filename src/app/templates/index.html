@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poll App</title>
+</head>
+<body>
+    <h1>Poll App</h1>
+
+    <!-- Poll creation form -->
+    <form action="{{ url_for('create_poll') }}" method="POST">
+        <label for="title">Poll Title:</label>
+        <input type="text" name="title" required>
+        <br>
+        <label for="option_1">Option 1:</label>
+        <input type="text" name="option_1" required>
+        <br>
+        <label for="option_2">Option 2:</label>
+        <input type="text" name="option_2" required>
+        <br>
+        <button type="submit">Create Poll</button>
+    </form>
+
+    <h2>Available Polls</h2>
+    {% for poll in polls %}
+        <div>
+            <h3>{{ poll[1] }}</h3>  <!-- Poll title -->
+            <p>Option 1: {{ poll[2] }} (Votes: {{ poll[4] }})</p>
+            <p>Option 2: {{ poll[3] }} (Votes: {{ poll[5] }})</p>
+            <form action="{{ url_for('vote', poll_id=poll[0]) }}" method="POST">
+                <input type="radio" name="choice" value="1"> Option 1<br>
+                <input type="radio" name="choice" value="2"> Option 2<br>
+                <button type="submit">Vote</button>
+            </form>
+        </div>
+    {% endfor %}
+</body>
+</html>
+
